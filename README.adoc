@@ -1,0 +1,8 @@
+= (Non)XML in a (Non)XML World
+Norman Walsh <ndw@nwalsh.com>
+
+== XML Amsterdam
+=== 6 November 2015
+
+This repository contains the sources for my presentation at
+XML Amsterdam 2015.
