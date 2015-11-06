@@ -449,6 +449,7 @@ image::despite-hl.png[Despite the fact…,link=http://asciidoctor.org/docs/ascii
 ** Flavor of the week
 * AsciiDoc
 ** AsciiDoctor
+* org-mode
 
 == Why?
 
