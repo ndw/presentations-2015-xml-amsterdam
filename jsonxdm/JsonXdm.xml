@@ -1,0 +1,13 @@
+<export><workspace name="JsonXdm"><query name="JS1" focus="true" active="true" content-source="as:5137994157211177962:" mode="javascript">var json = xdmp.documentGet("/projects/presentations/2015/11-xmlams/cf/cftemp.json")
+
+json</query><query name="JS2" focus="false" active="true" content-source="as:5137994157211177962:" mode="javascript">var json = xdmp.documentGet("/projects/presentations/2015/11-xmlams/cf/cftemp.json").next().value.toObject()
+
+json["Resources"]["InstanceSecurityGroup"]["Type"]</query><query name="XQ1" focus="false" active="true" content-source="as:5137994157211177962:" mode="xquery">xquery version "1.0-ml";
+
+let $json := xdmp:document-get("/projects/presentations/2015/11-xmlams/cf/cftemp.json")
+return
+  $json</query><query name="XQ2" focus="false" active="true" content-source="as:5137994157211177962:" mode="xquery">xquery version "1.0-ml";
+
+let $json := xdmp:document-get("/projects/presentations/2015/11-xmlams/cf/cftemp.json")
+return
+  $json//InstanceSecurityGroup/Type</query></workspace></export>

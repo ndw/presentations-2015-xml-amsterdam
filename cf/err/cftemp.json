@@ -1,0 +1,342 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "MarkLogic Sample  Template:: Build Date: NDW HVM 8.0.1",
+    "Parameters": {
+        "AdminUser": {
+            "Description": "The MarkLogic Administrator Username",
+            "Type": "String"
+        },
+        "AdminPass": {
+            "Description": "The MarkLogic Administrator Password",
+            "Type": "String",
+            "NoEcho": "true"
+        },
+        "IAMRole": {
+            "Description": "IAM Role",
+            "Type": "String"
+        },
+        "InstanceType": {
+            "Description": "Type of EC2 instance to launch",
+            "Type": "String",
+            "Default": "m1.medium"
+        },
+        "KeyName": {
+            "Description": "Name of and existing EC2 KeyPair to enable SSH access to the instance",
+            "Type": "String"
+        },
+        "LogSNS": {
+            "Description": "SNS Topic for logging - optional/advanced",
+            "Type": "String",
+            "Default": "none"
+        },
+        "Licensee": {
+            "Description": "The MarkLogic Licensee or 'none'",
+            "Type": "String",
+            "Default": "none"
+        },
+        "LicenseKey": {
+            "Description": "The MarkLogic License Key or 'none'",
+            "Type": "String",
+            "Default": "none"
+        },
+        "Nodes": {
+            "Description": "Set to 1 to initialize, 0 to shutdown/hibernate",
+            "Type": "Number",
+            "MinValue": "0",
+            "MaxValue": "1",
+            "Default": "1"
+        },
+        "VolumeSize": {
+            "Description": "The EBS Data volume size (GB)",
+            "Type": "Number",
+            "MinValue": "10",
+            "MaxValue": "1000",
+            "Default": "500"
+        },
+        "VolumeType": {
+            "Description": "The EBS Data volume Type",
+            "Type": "String",
+            "AllowedValues": [
+                "standard",
+                "gp2",
+                "piops"
+            ],
+            "Default": "gp2"
+        },
+        "Zone": {
+            "Description": "The AZ Zone (e.g. us-west-2a)",
+            "Type": "String",
+            "AllowedValues": [
+                "us-west-2a",
+                "us-west-2b",
+                "us-west-2c"
+            ]
+        },
+        "AMI": {
+            "Description": "AMI ID [default ML8.0-3, us-west-2]",
+            "Type": "String",
+            "Default": "ami-e9e9e9d9"
+        }
+    },
+    "Resources": {
+        "MarklogicVolume": {
+            "Type": "AWS::EC2::Volume",
+            "Properties": {
+                "AvailabilityZone": {"Ref": "Zone"},
+                "Size": {"Ref": "VolumeSize"},
+                "Tags": [{
+                    "Key": "Name",
+                    "Value": "MarkLogicData /var/opt/MarkLogic"
+                }],
+                "VolumeType": {"Ref": "VolumeType"}
+            },
+            "DeletionPolicy": "Retain"
+        },
+        "MarkLogicDDBTable": {
+            "Type": "AWS::DynamoDB::Table",
+            "Properties": {
+                "AttributeDefinitions": [{
+                    "AttributeName": "node",
+                    "AttributeType": "S"
+                }],
+                "KeySchema": [{
+                    "KeyType": "HASH",
+                    "AttributeName": "node"
+                }],
+                "ProvisionedThroughput": {
+                    "WriteCapacityUnits": 5,
+                    "ReadCapacityUnits": 5
+                }
+            }
+        },
+        "MarkLogicServerGroup": {
+            "Type": "AWS::AutoScaling::AutoScalingGroup",
+            "Properties": {
+                "AvailabilityZones": [{"Ref": "Zone"}],
+                "LaunchConfigurationName": {"Ref": "LaunchConfig"},
+                "MinSize": "0",
+                "MaxSize": "1",
+                "DesiredCapacity": {"Ref": "Nodes"},
+                "Cooldown": "300",
+                "HealthCheckType": "EC2",
+                "HealthCheckGracePeriod": "300",
+                "LoadBalancerNames": [{"Ref": "ElasticLoadBalancer"}],
+                "NotificationConfiguration": {
+                        "TopicARN": {"Ref": "LogSNS"},
+                        "NotificationTypes": [
+                            "autoscaling:EC2_INSTANCE_LAUNCH",
+                            "autoscaling:EC2_INSTANCE_LAUNCH_ERROR",
+                            "autoscaling:EC2_INSTANCE_TERMINATE",
+                            "autoscaling:EC2_INSTANCE_TERMINATE_ERROR"
+                            ]
+                    }
+                }
+            },
+        "LaunchConfig": {
+            "Type": "AWS::AutoScaling::LaunchConfiguration",
+            "Properties": {
+                "KeyName": {"Ref": "KeyName"},
+                "ImageId": {"Ref": "AMI"},
+            "UserData": {"Fn::Base64": {"Fn::Join": [
+                "",
+                [
+                    "#!/bin/bash\n",
+                    "function error_exit\n",
+                    "{\n",
+                    "     logger -t MarkLogic  \"$1\"",
+                    "  exit 1\n",
+                    "}\n",
+                    "yum update -y aws-cfn-bootstrap\n",
+                    "yum update -y\n",
+                    "# Install application\n",
+                    "/opt/aws/bin/cfn-init -v -s ",
+                    {"Ref": "AWS::StackId"},
+                    " -r ElasticLoadBalancer  --region ",
+                    {"Ref": "AWS::Region"},
+                    " || error_exit 'Failed to run cfn-init'\n",
+                    "\n",
+                    "# All is well so signal success\n",
+                    "\n"
+                ]
+            ]},
+            "SecurityGroups": [{"Ref": "InstanceSecurityGroup"}],
+            "InstanceType": {"Ref": "InstanceType"},
+            "IamInstanceProfile": {"Ref": "IAMRole"}}
+
+    },
+    "ElasticLoadBalancer": {
+        "Type": "AWS::ElasticLoadBalancing::LoadBalancer",
+        "Properties": {
+            "AppCookieStickinessPolicy": [{
+                "CookieName": "SessionID",
+                "PolicyName": "MLSession"
+            }],
+            "AvailabilityZones": [{"Ref": "Zone"}],
+            "ConnectionDrainingPolicy": {
+                "Enabled": "true",
+                "Timeout": "60"
+            },
+            "CrossZone": true,
+            "Listeners": [{
+                "LoadBalancerPort": "80",
+                "InstancePort": "80",
+                "Protocol": "HTTP",
+                "PolicyNames": ["MLSession"]
+            }],
+            "HealthCheck": {
+                "Target": "HTTP:7997/",
+                "HealthyThreshold": "3",
+                "UnhealthyThreshold": "5",
+                "Interval": "10",
+                "Timeout": "5"
+            }
+        },
+        "Metadata": {
+            "MarkLogic::MetaDataVersion": "2015-05-21-12:42:52",
+            "AWS::CloudFormation::Init": {
+                "configSets": {
+                    "default": [
+                        {"ConfigSet": "bootstrap"},
+                        {"ConfigSet": "update"}
+                    ],
+                    "bootstrap": ["config_bootstrap"],
+                    "update": ["config_update"]
+                },
+                "config_bootstrap": {
+                    "commands": {},
+                    "services": {"sysvinit": {
+                        "MarkLogic": {
+                            "enabled": "true",
+                            "ensureRunning": "false"
+                        },
+                        "nginx": {
+                            "enabled": "true",
+                            "ensureRunning": "false"
+                        }
+                    }}
+                },
+                "config_update": {
+                    "files": {"/etc/marklogic.conf": {
+                        "content": {"Fn::Join": [
+                            "",
+                            [
+                                "MAKRLOGIC_DDB_TABLE=",
+                                {"Ref": "MarkLogicDDBTable"},
+                                "\n",
+                                "MARKLOGIC_CLUSTER_NAME=",
+                                {"Ref": "MarkLogicDDBTable"},
+                                "\n",
+                                "MARKLOGIC_EBS_VOLUME=",
+                                {"Ref": "MarklogicVolume"},
+                                "\n",
+                                "MARKLOGIC_NODE_NAME=MLNode1\n",
+                                "MARKLOGIC_ADMIN_USERNAME=",
+                                {"Ref": "AdminUser"},
+                                "\n",
+                                "MARKLOGIC_ADMIN_PASSWORD=",
+                                {"Ref": "AdminPass"},
+                                "\n",
+                                "MARKLOGIC_CLUSTER_MASTER=1\n",
+                                "MARKLOGIC_LICENSEE=",
+                                {"Ref": "Licensee"},
+                                "\n",
+                                "MARKLOGIC_LICENSE_KEY=",
+                                {"Ref": "LicenseKey"},
+                                "\n",
+                                "MARKLOGIC_LOG_SNS=",
+                                            {"Ref": "LogSNS"},
+                                "\n"
+                            ]
+                        ]},
+                        "mode": "000440",
+                        "owner": "root",
+                        "group": "root"
+                    }},
+                    "services": {
+                     "sysvinit": {
+                      "MarkLogic": {
+                        "enabled": "true",
+                        "ensureRunning": "true",
+                        "files": [
+                            "/etc/marklogic.conf",
+                            "/etc/sysconfig/MarkLogic"
+                        ],
+                        "packages": [{"yum": [
+                            "MarkLogic",
+                            "java"
+                        ]}]
+                    }}}
+                }
+            }
+        }
+    },
+    "InstanceSecurityGroup": {
+        "Type": "AWS::EC2::SecurityGroup",
+        "Properties": {
+            "GroupDescription": "Enable SSH access and HTTP access on the inbound port",
+            "SecurityGroupIngress": [
+                {
+                    "IpProtocol": "tcp",
+                    "FromPort": "22",
+                    "ToPort": "22",
+                    "CidrIp": "0.0.0.0/0"
+                },
+                {
+                    "IpProtocol": "tcp",
+                    "FromPort": "25",
+                    "ToPort": "25",
+                    "CidrIp": "0.0.0.0/0"
+                },
+                {
+                    "IpProtocol": "tcp",
+                    "FromPort": "7998",
+                    "ToPort": "7998",
+                    "CidrIp": "0.0.0.0/0"
+                },
+                {
+                    "IpProtocol": "tcp",
+                    "FromPort": "7997",
+                    "ToPort": "7997",
+                    "SourceSecurityGroupOwnerId": {"Fn::GetAtt": [
+                        "ElasticLoadBalancer",
+                        "SourceSecurityGroup.OwnerAlias"
+                    ]},
+                    "SourceSecurityGroupName": {"Fn::GetAtt": [
+                        "ElasticLoadBalancer",
+                        "SourceSecurityGroup.GroupName"
+                    ]}
+                }
+            ]
+        }
+    },
+    "InstanceSecurityGroupIngress": {
+        "Type": "AWS::EC2::SecurityGroupIngress",
+        "Properties": {
+            "IpProtocol": "tcp",
+            "GroupName": {"Ref": "InstanceSecurityGroup"},
+            "FromPort": "7999",
+            "ToPort": "7999",
+            "SourceSecurityGroupName": {"Ref": "InstanceSecurityGroup"}
+        }
+    }},
+    "Outputs": {
+        "URL": {
+            "Description": "The URL of the MarkLogic Cluster",
+            "Value": {"Fn::Join": [
+                "",
+                [
+                    "http://",
+                    {"Fn::GetAtt": [
+                        "ElasticLoadBalancer",
+                        "DNSName"
+                    ]},
+                    ":80"
+                ]
+            ]}
+        },
+         "DymamoDB": {
+            "Description": "The DynamoDB Table",
+            "Value": {"Ref": "MarkLogicDDBTable"}
+        }
+    }
+}

@@ -1,0 +1,382 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object xmlns="http://marklogic.com/xdmp/json/basic"
+      xmlns:AWS="http://amazon.com/aws"
+      xmlns:MarkLogic="http://marklogic.com/ns">
+   <AWSTemplateFormatVersion>2010-09-09</AWSTemplateFormatVersion>
+   <Description>MarkLogic Sample  Template:: Build Date: NDW HVM 8.0.1</Description>
+   <Parameters>
+      <AdminUser>
+         <Description>The MarkLogic Administrator Username</Description>
+         <Type>String</Type>
+      </AdminUser>
+      <AdminPass>
+         <Description>The MarkLogic Administrator Password</Description>
+         <Type>String</Type>
+         <NoEcho>true</NoEcho>
+      </AdminPass>
+      <IAMRole>
+         <Description>IAM Role</Description>
+         <Type>String</Type>
+      </IAMRole>
+      <InstanceType>
+         <Description>Type of EC2 instance to launch</Description>
+         <Type>String</Type>
+         <Default>m1.medium</Default>
+      </InstanceType>
+      <KeyName>
+         <Description>Name of and existing EC2 KeyPair to enable SSH access to the instance</Description>
+         <Type>String</Type>
+      </KeyName>
+      <LogSNS>
+         <Description>SNS Topic for logging - optional/advanced</Description>
+         <Type>String</Type>
+         <Default>none</Default>
+      </LogSNS>
+      <Licensee>
+         <Description>The MarkLogic Licensee or 'none'</Description>
+         <Type>String</Type>
+         <Default>none</Default>
+      </Licensee>
+      <LicenseKey>
+         <Description>The MarkLogic License Key or 'none'</Description>
+         <Type>String</Type>
+         <Default>none</Default>
+      </LicenseKey>
+      <Nodes>
+         <Description>Set to 1 to initialize, 0 to shutdown/hibernate</Description>
+         <Type>Number</Type>
+         <MinValue>0</MinValue>
+         <MaxValue>1</MaxValue>
+         <Default>1</Default>
+      </Nodes>
+      <VolumeSize>
+         <Description>The EBS Data volume size (GB)</Description>
+         <Type>Number</Type>
+         <MinValue>10</MinValue>
+         <MaxValue>1000</MaxValue>
+         <Default>500</Default>
+      </VolumeSize>
+      <VolumeType>
+         <Description>The EBS Data volume Type</Description>
+         <Type>String</Type>
+         <AllowedValues type="array">
+            <item>standard</item>
+            <item>gp2</item>
+            <item>piops</item>
+         </AllowedValues>
+         <Default>gp2</Default>
+      </VolumeType>
+      <Zone>
+         <Description>The AZ Zone (e.g. us-west-2a)</Description>
+         <Type>String</Type>
+         <AllowedValues type="array">
+            <item>us-west-2a</item>
+            <item>us-west-2b</item>
+            <item>us-west-2c</item>
+         </AllowedValues>
+      </Zone>
+      <AMI>
+         <Description>AMI ID [default ML8.0-3, us-west-2]</Description>
+         <Type>String</Type>
+         <Default>ami-e9e9e9d9</Default>
+      </AMI>
+   </Parameters>
+   <Resources>
+      <MarklogicVolume>
+         <Type>AWS::EC2::Volume</Type>
+         <Properties>
+            <AvailabilityZone>
+               <Ref>Zone</Ref>
+            </AvailabilityZone>
+            <Size>
+               <Ref>VolumeSize</Ref>
+            </Size>
+            <Tags type="array">
+               <object>
+                  <Key>Name</Key>
+                  <Value>MarkLogicData /var/opt/MarkLogic</Value>
+               </object>
+            </Tags>
+            <VolumeType>
+               <Ref>VolumeType</Ref>
+            </VolumeType>
+         </Properties>
+         <DeletionPolicy>Retain</DeletionPolicy>
+      </MarklogicVolume>
+      <MarkLogicDDBTable>
+         <Type>AWS::DynamoDB::Table</Type>
+         <Properties>
+            <AttributeDefinitions type="array">
+               <object>
+                  <AttributeName>node</AttributeName>
+                  <AttributeType>S</AttributeType>
+               </object>
+            </AttributeDefinitions>
+            <KeySchema type="array">
+               <object>
+                  <KeyType>HASH</KeyType>
+                  <AttributeName>node</AttributeName>
+               </object>
+            </KeySchema>
+            <ProvisionedThroughput>
+               <WriteCapacityUnits type="number">5</WriteCapacityUnits>
+               <ReadCapacityUnits type="number">5</ReadCapacityUnits>
+            </ProvisionedThroughput>
+         </Properties>
+      </MarkLogicDDBTable>
+      <MarkLogicServerGroup>
+         <Type>AWS::AutoScaling::AutoScalingGroup</Type>
+         <Properties>
+            <AvailabilityZones type="array">
+               <object>
+                  <Ref>Zone</Ref>
+               </object>
+            </AvailabilityZones>
+            <LaunchConfigurationName>
+               <Ref>LaunchConfig</Ref>
+            </LaunchConfigurationName>
+            <MinSize>0</MinSize>
+            <MaxSize>1</MaxSize>
+            <DesiredCapacity>
+               <Ref>Nodes</Ref>
+            </DesiredCapacity>
+            <Cooldown>300</Cooldown>
+            <HealthCheckType>EC2</HealthCheckType>
+            <HealthCheckGracePeriod>300</HealthCheckGracePeriod>
+            <LoadBalancerNames type="array">
+               <object>
+                  <Ref>ElasticLoadBalancer</Ref>
+               </object>
+            </LoadBalancerNames>
+            <NotificationConfiguration>
+               <TopicARN>
+                  <Ref>LogSNS</Ref>
+               </TopicARN>
+               <NotificationTypes type="array">
+                  <item>autoscaling:EC2_INSTANCE_LAUNCH</item>
+                  <item>autoscaling:EC2_INSTANCE_LAUNCH_ERROR</item>
+                  <item>autoscaling:EC2_INSTANCE_TERMINATE</item>
+                  <item>autoscaling:EC2_INSTANCE_TERMINATE_ERROR</item>
+               </NotificationTypes>
+            </NotificationConfiguration>
+         </Properties>
+      </MarkLogicServerGroup>
+      <LaunchConfig>
+         <Type>AWS::AutoScaling::LaunchConfiguration</Type>
+         <Properties>
+            <KeyName>
+               <Ref>KeyName</Ref>
+            </KeyName>
+            <ImageId>
+               <Ref>AMI</Ref>
+            </ImageId>
+            <UserData encoding="base64">
+#!/bin/bash
+
+function error_exit
+{
+  logger -t MarkLogic  "$1"
+  exit 1
+}
+
+yum update -y aws-cfn-bootstrap
+yum update -y
+
+# Install application
+/opt/aws/bin/cfn-init -v \
+   -s <AWS:StackId/>
+   -r ElasticLoadBalancer  --region <AWS:Region/> \
+   || error_exit 'Failed to run cfn-init'
+
+# All is well so signal success
+            <SecurityGroups type="array">
+               <object>
+                  <Ref>InstanceSecurityGroup</Ref>
+               </object>
+            </SecurityGroups>
+            <InstanceType>
+               <Ref>InstanceType</Ref>
+            </InstanceType>
+            <IamInstanceProfile>
+               <Ref>IAMRole</Ref>
+            </IamInstanceProfile>
+         </Properties>
+      </LaunchConfig>
+      <ElasticLoadBalancer>
+         <Type>AWS::ElasticLoadBalancing::LoadBalancer</Type>
+         <Properties>
+            <AppCookieStickinessPolicy type="array">
+               <object>
+                  <CookieName>SessionID</CookieName>
+                  <PolicyName>MLSession</PolicyName>
+               </object>
+            </AppCookieStickinessPolicy>
+            <AvailabilityZones type="array">
+               <object>
+                  <Ref>Zone</Ref>
+               </object>
+            </AvailabilityZones>
+            <ConnectionDrainingPolicy>
+               <Enabled>true</Enabled>
+               <Timeout>60</Timeout>
+            </ConnectionDrainingPolicy>
+            <CrossZone type="boolean">true</CrossZone>
+            <Listeners type="array">
+               <object>
+                  <LoadBalancerPort>80</LoadBalancerPort>
+                  <InstancePort>80</InstancePort>
+                  <Protocol>HTTP</Protocol>
+                  <PolicyNames type="array">
+                     <item>MLSession</item>
+                  </PolicyNames>
+               </object>
+            </Listeners>
+            <HealthCheck>
+               <Target>HTTP:7997/</Target>
+               <HealthyThreshold>3</HealthyThreshold>
+               <UnhealthyThreshold>5</UnhealthyThreshold>
+               <Interval>10</Interval>
+               <Timeout>5</Timeout>
+            </HealthCheck>
+         </Properties>
+         <Metadata>
+            <MarkLogic:MetaDataVersion>2015-05-21-12:42:52</MarkLogic:MetaDataVersion>
+            <AWS:CloudFormation_Init>
+               <configSets>
+                  <default type="array">
+                     <object>
+                        <ConfigSet>bootstrap</ConfigSet>
+                     </object>
+                     <object>
+                        <ConfigSet>update</ConfigSet>
+                     </object>
+                  </default>
+                  <bootstrap type="array">
+                     <item>config_bootstrap</item>
+                  </bootstrap>
+                  <update type="array">
+                     <item>config_update</item>
+                  </update>
+               </configSets>
+               <config__bootstrap>
+                  <commands/>
+                  <services>
+                     <sysvinit>
+                        <MarkLogic>
+                           <enabled>true</enabled>
+                           <ensureRunning>false</ensureRunning>
+                        </MarkLogic>
+                        <nginx>
+                           <enabled>true</enabled>
+                           <ensureRunning>false</ensureRunning>
+                        </nginx>
+                     </sysvinit>
+                  </services>
+               </config__bootstrap>
+               <config__update>
+                  <files>
+                    <file filename="marklogic.conf"
+                          mode="000440" owner="root" group="root">
+MAKRLOGIC_DDB_TABLE=<Ref>MarkLogicDDBTable</Ref>
+MARKLOGIC_CLUSTER_NAME=<Ref>MarkLogicDDBTable</Ref>
+MARKLOGIC_EBS_VOLUME=<Ref>MarklogicVolume</Ref>
+MARKLOGIC_NODE_NAME=MLNode1
+MARKLOGIC_ADMIN_USERNAME=<Ref>AdminUser</Ref>
+MARKLOGIC_ADMIN_PASSWORD=<Ref>AdminPass</Ref>
+MARKLOGIC_CLUSTER_MASTER=1
+MARKLOGIC_LICENSEE=<Ref>Licensee</Ref>
+MARKLOGIC_LICENSE_KEY=<Ref>LicenseKey</Ref>
+MARKLOGIC_LOG_SNS=<Ref>LogSNS</Ref>
+                    </file>
+                  </files>
+                  <services>
+                     <sysvinit>
+                        <MarkLogic>
+                           <enabled>true</enabled>
+                           <ensureRunning>true</ensureRunning>
+                           <files type="array">
+                              <item>/etc/marklogic.conf</item>
+                              <item>/etc/sysconfig/MarkLogic</item>
+                           </files>
+                           <packages type="array">
+                              <object>
+                                 <yum type="array">
+                                    <item>MarkLogic</item>
+                                    <item>java</item>
+                                 </yum>
+                              </object>
+                           </packages>
+                        </MarkLogic>
+                     </sysvinit>
+                  </services>
+               </config__update>
+             </AWS:CloudFormation_Init>
+         </Metadata>
+      </ElasticLoadBalancer>
+      <InstanceSecurityGroup>
+         <Type>AWS::EC2::SecurityGroup</Type>
+         <Properties>
+            <GroupDescription>Enable SSH access and HTTP access on the inbound port</GroupDescription>
+            <SecurityGroupIngress type="array">
+               <object>
+                  <IpProtocol>tcp</IpProtocol>
+                  <FromPort>22</FromPort>
+                  <ToPort>22</ToPort>
+                  <CidrIp>0.0.0.0/0</CidrIp>
+               </object>
+               <object>
+                  <IpProtocol>tcp</IpProtocol>
+                  <FromPort>25</FromPort>
+                  <ToPort>25</ToPort>
+                  <CidrIp>0.0.0.0/0</CidrIp>
+               </object>
+               <object>
+                  <IpProtocol>tcp</IpProtocol>
+                  <FromPort>7998</FromPort>
+                  <ToPort>7998</ToPort>
+                  <CidrIp>0.0.0.0/0</CidrIp>
+               </object>
+               <object>
+                  <IpProtocol>tcp</IpProtocol>
+                  <FromPort>7997</FromPort>
+                  <ToPort>7997</ToPort>
+                  <SourceSecurityGroupOwnerId
+                      select="AWS:getAtt('ElasticLoadBalancer',
+                                         'SourceSecurityGroup.OwnerAlias')"/>
+                  <SourceSecurityGroupName
+                      select="AWS:getAtt('ElasticLoadBalancer',
+                                         'SourceSecurityGroup.GroupName')"/>
+               </object>
+            </SecurityGroupIngress>
+         </Properties>
+      </InstanceSecurityGroup>
+      <InstanceSecurityGroupIngress>
+         <Type>AWS::EC2::SecurityGroupIngress</Type>
+         <Properties>
+            <IpProtocol>tcp</IpProtocol>
+            <GroupName>
+               <Ref>InstanceSecurityGroup</Ref>
+            </GroupName>
+            <FromPort>7999</FromPort>
+            <ToPort>7999</ToPort>
+            <SourceSecurityGroupName>
+               <Ref>InstanceSecurityGroup</Ref>
+            </SourceSecurityGroupName>
+         </Properties>
+      </InstanceSecurityGroupIngress>
+   </Resources>
+   <Outputs>
+      <URL>
+         <Description>The URL of the MarkLogic Cluster</Description>
+         <Value select="'http://'
+                         ||AWS:getAtt('ElasticLoadBalancer','DNSName')
+                         ||':80')"/>
+      </URL>
+      <DymamoDB>
+         <Description>The DynamoDB Table</Description>
+         <Value>
+            <Ref>MarkLogicDDBTable</Ref>
+         </Value>
+      </DymamoDB>
+   </Outputs>
+</object>

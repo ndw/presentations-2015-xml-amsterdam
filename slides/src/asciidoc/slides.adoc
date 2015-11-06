@@ -1,0 +1,660 @@
+= (Non)XML in a (Non)XML World
+Norman Walsh <ndw@nwalsh.com>
+:docinfo:
+
+:imagesdir: img
+
+== Welcome to XML Amsterdam
+
+=== Around the world in … ~22 hours
+
+image::world.png[World map]
+
+Because I’m crazy, that’s why.
+
+▼
+
+=== Keynote speaker?
+
+image::keynote.png[Keynote tweet, link=https://twitter.com/XMLAmsterdam/status/639073784033624064]
+
+* Say something _profound_
+* Or say something _reflective_
+
+=== What to say, what to say?
+
+[#frag1]
+* XML in a non-XML world?
+* Non-XML in an XML world?
+* Hence the title
+
+=== Practical (Non)XML
+
+[#frag2]
+* Why XML?
+* Why not XML?
+* It’s all XML, some of it is just weirdly serialized
+* And what if you could do more?
+* With fun demos!
+
+== Why XML?
+
+=== It’s the structure, stupid
+
+* I’ve trained myself to think in terms of structure
+* Structure is absolutely essential for reuse
+** Using the same content in different documents
+** Using the same content in different contexts
+* _Everyone_ wants reuse
+
+== Why Not XML?
+
+=== It’s the stupid structure
+
+* It’s too complex
+* It’s too verbose
+* It’s too draconian
+* It’s hard to produce
+* It’s hard to consume
+  ** Doesn’t map nicely to programming language data structures
+
+== No, XML!
+
+* It’s complex enough to capture rich document structures (mixed content)
+* It allows (requires) the author to speak with precision
+* It’s always better to be correct
+* It’s hard to produce/consume with non-XML tools
+  ** Patient: “Doctor, doctor, it hurts when I scratch my elbow.”
+  ** Doctor: “Then stop scratching your elbow.”
+
+== Hierarchy of projects
+
+[#frag11]
+* Tens of very big projects. Very big budgets. Very sensitive to error.
+* Hundreds of big projects. Big budgets. Sensitive to error.
+* Thousands of smaller projects. Small budgets. Less sensitive to error.
+* Millions of small projects. No budgets. Mostly insensitive to error.
+* This is what winning looks like, by the way.
+
+== The simplest thing
+
+=== The simplest thing that could possibly work
+
+* If all you need are:
+  ** Atomic values
+  ** Lists of atomic values
+  ** Key/values pairs (associative arrays, hashes, “objects”)
+
+▼
+
+=== JSON is simple
+
+* No elements
+* No attributes
+* No namespaces
+* No mixed content
+* A paucity of data types
+* “Just” objects, arrays, and scalar values
+
+=== JSON is “just data”
+
+It maps directly to programming language concepts that
+are provided “natively” by most programming languages
+and well understood by most programmers.
+
+=== With schemas…
+
+....
+{
+	"title": "Example Schema",
+	"type": "object",
+	"properties": {
+		"firstName": {
+			"type": "string"
+		},
+		"lastName": {
+			"type": "string"
+		},
+		"age": {
+			"description": "Age in years",
+			"type": "integer",
+			"minimum": 0
+		}
+	},
+	"required": ["firstName", "lastName"]
+}
+....
+
+=== And namespaces (sortof)…
+
+....
+{
+    "@id": "http://store.example.com/",
+    "@type": "Store",
+    "name": "Links Bike Shop",
+    "description": "The most \"linked\" bike store on earth!",
+    "product": [
+        {
+            "@id": "p:links-swift-chain",
+            "@type": "Product",
+            "name": "Links Swift Chain",
+            "description": "A fine chain with many links.",
+            "category": ["cat:parts", "cat:chains"],
+            "price": "10.00",
+            "stock": 10
+        }
+    ],
+    "@context": {
+        "Store": "http://ns.example.com/store#Store",
+        "Product": "http://ns.example.com/store#Product",
+        "product": "http://ns.example.com/store#product",
+        "category":
+        {
+          "@id": "http://ns.example.com/store#category",
+          "@type": "@id"
+        },
+        "price": "http://ns.example.com/store#price",
+        "stock": "http://ns.example.com/store#stock",
+        "name": "http://purl.org/dc/terms/title",
+        "description": "http://purl.org/dc/terms/description",
+        "p": "http://store.example.com/products/",
+        "cat": "http://store.example.com/category/"
+    }
+}
+....
+
+But I digress.
+
+=== Simple is better
+
+[#frag3]
+* Simplicity is rarely an absolute
+* Making some things simpler almost _always_ makes other things more complicated
+* Complexity creeps up on you
+
+=== Demo
+
+AWS CloudFormation templates
+
+=== JSON template (1/2)
+
+....
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "MarkLogic Sample  Template:: Build Date: NDW HVM 8.0.1",
+    "Parameters": {
+        "AdminUser": {
+            "Description": "The MarkLogic Administrator Username",
+            "Type": "String"
+        },
+....
+
+It all looks fairly reasonable, until…
+
+=== JSON template (2/2)
+
+....
+            "UserData": {"Fn::Base64": {"Fn::Join": [
+                "",
+                [
+                    "#!/bin/bash\n",
+                    "function error_exit\n",
+                    "{\n",
+                    "     logger -t MarkLogic  \"$1\"",
+....
+
+* Funny key names with implied semantics
+* No multi-line strings
+
+=== XML template (1/2)
+
+....
+<object xmlns="http://marklogic.com/xdmp/json/basic"
+      xmlns:AWS="http://amazon.com/aws"
+      xmlns:MarkLogic="http://marklogic.com/ns">
+   <AWSTemplateFormatVersion>2010-09-09</AWSTemplateFormatVersion>
+   <Description>MarkLogic Sample  Template:: Build Date: NDW HVM 8.0.1</Description>
+   <Parameters>
+      <AdminUser>
+         <Description>The MarkLogic Administrator Username</Description>
+         <Type>String</Type>
+      </AdminUser>
+....
+
+I totally made up this XML vocabulary
+
+=== XML template (2/2)
+
+....
+            <UserData encoding="base64">
+#!/bin/bash
+
+function error_exit
+{
+  logger -t MarkLogic  "$1"
+  exit 1
+}
+....
+=== JSON error
+
+....
+[Error: Parse error on line 342:
+...}        }    }}
+-------------------^
+Expecting '}', ',', got 'EOF']
+....
+
+* Very, uhm, “helpful”
+
+=== XML error
+
+....
+cftemp.xml:203: parser error :
+   Opening and ending tag mismatch: UserData line 173 and Properties
+         </Properties>
+....
+
+* Missing end tag precisely identified
+
+== Verbosity
+
+=== XML inputs
+
+* XML is too verbose
+* XML is too hard to type
+* Why do I have to quote attribute values?
+* Why do I have to have matching end tags?
+
+▼
+
+=== Simpler inputs
+
+* Simpler input formats are all the rage
+** What’s your favorite MarkDown flavor this week?
+* This is not a new concept
+
+=== To prove this point
+
+I wrote a JSON parser…
+
+[#frag1b]
+in SGML
+
+=== You did what now?
+
+[quote, B. Tommie Usdin]
+First of all: YOU ARE NUTS! Creative, ingenious, and NUTS!
+
+[quote, Debbie Lapeyre]
+By the by, did I bother to tell you that this is ingenious. And yes,
+you can do it. Aaaaaaqaaaaaaaaargh! You are one very sick puppy
+
+
+=== Remember: In SGML…
+
+[#frag4]
+1. You _must_ have a schema (a DTD)
+2. You are allowed to omit (some) start and end tags
+3. Structures can span across entity boundaries
+4. You can write a state machines with `SHORTREF`
+
+****
+The HTML5 rules for head and tbody
+****
+
+=== Demo
+
+Parsing JSON with SGML
+
+=== An SGML document
+
+....
+<!DOCTYPE doc SYSTEM "json.dtd">
+<doc>
+{
+    "object": {
+        "key": "value",
+        "key2": "value2",
+        "array": [
+            "a",
+            "b",
+            "c"
+        ]
+    }
+}
+</doc>
+....
+
+=== An SGML DTD
+
+....
+<!ENTITY object-open     "<object>">
+<!ENTITY object-close    "</object>">
+<!ENTITY key-open        "<pair><key>">
+<!ENTITY key-close       "</key>">
+<!ENTITY value-open      "<value>">
+<!ENTITY value-close     "</value></pair>">
+<!ENTITY array-open      "<array>">
+<!ENTITY array-close     "</array>">
+<!ENTITY entry-open      "<entry>">
+<!ENTITY entry-close     "</entry>">
+<!ENTITY string-open     "<string>">
+<!ENTITY string-close    "</string>">
+
+<!SHORTREF start-map  '{' object-open
+                      '[' array-open
+                      '"' string-open>
+
+<!SHORTREF object-map '"' key-open
+                      '}' object-close
+                      ':' value-open>
+
+<!SHORTREF value-map  '"' string-open
+                      ',' value-close
+                      '{' object-open
+                      '[' array-open
+                      ']' array-close
+                      '}' object-close>
+
+<!SHORTREF array-map  '"' string-open
+                      '{' object-open
+                      ',' entry-open
+                      '[' array-open
+                      ']' array-close
+                      '}' object-close>
+
+<!SHORTREF key-map    '"' key-close>
+<!SHORTREF string-map '"' string-close>
+
+<!USEMAP start-map    doc>
+<!USEMAP object-map   object>
+<!USEMAP key-map      key>
+<!USEMAP value-map    value>
+<!USEMAP string-map   string>
+<!USEMAP array-map    array>
+
+<!ELEMENT doc    - - (object|array)+>
+<!ELEMENT pair   O O (key,value)>
+<!ELEMENT object - - (pair)+>
+<!ELEMENT key    - - (#PCDATA)*>
+<!ELEMENT value  - O (object|array|string)*>
+<!ELEMENT string - - (#PCDATA)*>
+<!ELEMENT array  - - (entry)+>
+<!ELEMENT entry  O O (object|string)>
+....
+
+=== The same SGML document
+
+....
+<!DOCTYPE doc SYSTEM "json.dtd">
+<doc>
+   <object>
+      <pair>
+         <key>object</key>
+         <value>
+            <object>
+               <pair>
+                  <key>key</key>
+                  <value>
+                     <string>value</string>
+                  </value>
+               </pair>
+               <pair>
+                  <key>key2</key>
+                  <value>
+                     <string>value2</string>
+                  </value>
+               </pair>
+               <pair>
+                  <key>array</key>
+                  <value>
+                     <array>
+                        <entry>
+                           <string>a</string>
+                        </entry>
+                        <entry>
+                           <string>b</string>
+                        </entry>
+                        <entry>
+                           <string>c</string>
+                        </entry>
+                     </array>
+                  </value>
+               </pair>
+            </object>
+         </value>
+      </pair>
+   </object>
+</doc>
+....
+
+== It’s not simple enough
+
+image::lessobsessive.png[Less obsessive tweet,link=https://twitter.com/marijnjh/status/651677587178131456]
+
+== Thoughts on writing
+
+* Some folks say you can’t write in XML:
+
+image::despite-hl.png[Despite the fact…,link=http://asciidoctor.org/docs/asciidoc-writers-guide/#converting-a-document-to-docbook]
+
+* Generally speaking, [NSFW –ed]
+* I assert that structure aids my writing
+
+== Non-XML XML Authoring
+
+* MarkDown
+** CommonMark
+** GitHub
+** Flavor of the week
+* AsciiDoc
+** AsciiDoctor
+
+== Why?
+
+* Simpler is better
+* HTML5 isn’t helping authors
+
+== It’s not markup
+
+image::notmarkup.png[Not markup tweet,link=https://twitter.com/mollydotcom/status/654712233331560448]
+
+image::dislikehtml5.png[Dislike HTML5 tweet,link=https://twitter.com/mollydotcom/status/654717106492080130]
+
+== The modern web
+
+* HTML5
+* JavaScript
+** JQuery
+** Angular
+* CSS
+** Sass
+* Analytics
+
+It’s frameworks all the way down
+
+== Authoring
+
+=== My typical methodology
+
+
+* Write in DocBook, or some customization
+* Convert to HTML with CSS and JavaScript for presentation
+* Convert to PDF for print
+* Refactor, reuse, repurpose, restyle with ease
+
+▼
+
+=== Methodology for this talk
+
+* Was written entirely in AsciiDoc
+* Formatted by AsciiDoctor into DocBook 5
+* Transformed by XSLT into HTML5
+* Displayed with http://lab.hakim.se/reveal-js/#/[Reveal.JS]
+
+****
+* AsciiDoctor for something real
+* Still using DocBook because I have tooling
+* Reveal.JS is modern and useful and I don’t have to maintain it!
+****
+
+=== I have concerns
+
+* For simple content, “markdown” is easier
+* But for complex content…
+
+=== It’s all a bit ad hoc
+
+....
+= Main Title
+Norman Walsh <ndw@nwalsh.com>
+:docinfo:
+:imagesdir: img
+
+== Section Title
+image::world.png[World map,link=http://example.com/]
+[#frag5]
+* Simplicity is rarely an absolute
+****
+Speaker notes
+****
+
+[quote, B. Tommie Usdin]
+First of all: YOU ARE NUTS! Creative, ingenious, and NUTS!
+....
+
+[#frag6]
+* It’s really a step back to the pre-markup days
+* Is it easier to let a thousand flowers bloom these days?
+
+****
+* Everything is much more connected, less need for docs? interchange?
+* Weird procedural errors
+* Swing, pendulum, swing!
+****
+
+=== Quiz (1/2)
+
+Who recognizes these dot commands?
+
+|===
+| Description | Command
+| Bidirectional print on/off | `.BP`
+| Microjustify on/off | `.UJ`
+| Page offset | `.PO`
+| Comment (not printed)	| `.IG` _or_ `..`
+|===
+
+****
+WordStar
+
+Possibly US centric?
+
+I’m not going to bother with TeX and troff
+****
+
+=== Quiz (2/2)
+
+And this markup?
+
+....
+@Heading(The Beginning)
+@Begin(Quotation)
+      Let's start at the very beginning, a very good place to start
+@End(Quotation)
+....
+****
+Scribe
+****
+
+== JSON revisited
+
+=== What is JSON?
+
+[#frag7]
+* JSON is structured markup
+* We have good tools for leveraging document structure
+* What if we could use them on JSON?
+
+[#frag9]
+▼
+
+=== XPath over JSON
+
+....
+{
+  "a": {
+    "b" : "v1",
+    "c1" : 1,
+    "d" : null,
+    "g" : ["s1", "s2", "s3"]
+  }
+}
+....
+
+* `/a/b` = `"v1"`
+* `/a/g` = `("s1", "s2", "s3")`
+* `/a/g[2]` = `"s2"` _❔_
+
+****
+Remember that /a/b always returns a sequence
+sorted in document order
+****
+
+=== XPath over JSON (continued)
+
+....
+{
+  "a": {
+    "b" : "v1",
+    "c1" : 1,
+    "d" : null,
+    "g" : ["s1", "s2", "s3"]
+  }
+}
+....
+
+* `/a/d` = `null` _❔_
+* `/a/g[1]/node-name()` = `g` _❔_
+* `/a/g[2]/node-name()` = `g` _❔_
+
+=== Demo
+
+JSON in MarkLogic Server
+
+=== JavaScript+JSON in MarkLogic Server
+
+....
+var json = xdmp.documentGet("/projects/presentations/2015/11-xmlams/cf/cftemp.json").next().value.toObject()
+
+json["Resources"]["InstanceSecurityGroup"]["Type"]
+....
+
+* Returns “`AWS::EC2::SecurityGroup`”
+
+=== XPath over JSON in MarkLogic Server
+
+....
+xquery version "1.0-ml";
+
+let $json := xdmp:document-get("/projects/presentations/2015/11-xmlams/cf/cftemp.json")
+return
+  $json//InstanceSecurityGroup/Type
+....
+
+* Returns “`AWS::EC2::SecurityGroup`”
+
+== Did XML lose?
+
+image::wishxmlhadwon.png[XML Tweet,link=https://twitter.com/aspyker/status/655804055101550592]
+
+== In conclusion
+
+[#frag9]
+With apologies to Taylor Swift
+
+[quote]
+'Cause the parsers gonna parse, parse, parse, +
+And the haters gonna hate, hate, hate, +
+Baby, I’m just gonna shake, shake, shake, shake, shake +
+I shake it off, I shake it off

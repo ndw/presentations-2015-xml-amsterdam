@@ -1,0 +1,53 @@
+<!ENTITY object-open     "<object>">
+<!ENTITY object-close    "</object>">
+<!ENTITY key-open        "<pair><key>">
+<!ENTITY key-close       "</key>">
+<!ENTITY value-open      "<value>">
+<!ENTITY value-close     "</value></pair>">
+<!ENTITY array-open      "<array>">
+<!ENTITY array-close     "</array>">
+<!ENTITY entry-open      "<entry>">
+<!ENTITY entry-close     "</entry>">
+<!ENTITY string-open     "<string>">
+<!ENTITY string-close    "</string>">
+
+<!SHORTREF start-map  '{' object-open
+                      '[' array-open
+                      '"' string-open>
+
+<!SHORTREF object-map '"' key-open
+                      '}' object-close
+                      ':' value-open>
+
+<!SHORTREF value-map  '"' string-open
+                      ',' value-close
+                      '{' object-open
+                      '[' array-open
+                      ']' array-close
+                      '}' object-close>
+
+<!SHORTREF array-map  '"' string-open
+                      '{' object-open
+                      ',' entry-open
+                      '[' array-open
+                      ']' array-close
+                      '}' object-close>
+
+<!SHORTREF key-map    '"' key-close>
+<!SHORTREF string-map '"' string-close>
+
+<!USEMAP start-map    doc>
+<!USEMAP object-map   object>
+<!USEMAP key-map      key>
+<!USEMAP value-map    value>
+<!USEMAP string-map   string>
+<!USEMAP array-map    array>
+
+<!ELEMENT doc    - - (object|array)+>
+<!ELEMENT pair   O O (key,value)>
+<!ELEMENT object - - (pair)+>
+<!ELEMENT key    - - (#PCDATA)*>
+<!ELEMENT value  - O (object|array|string)*>
+<!ELEMENT string - - (#PCDATA)*>
+<!ELEMENT array  - - (entry)+>
+<!ELEMENT entry  O O (object|string)>

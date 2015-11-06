@@ -1,0 +1,101 @@
+defaultTasks 'html'
+
+buildscript {
+  repositories {
+    maven { url uri('/tmp/repo') }
+    mavenLocal()
+    mavenCentral()
+    maven { url "http://maven.restlet.org" }
+  }
+
+  dependencies {
+    classpath "org.docbook:docbook-xslt2:2.0.18"
+    classpath "com.xmlcalabash:xmlcalabash:1.1.9-96"
+    classpath "com.xmlcalabash:xmlcalabash1-print:1.1.4"
+    classpath "com.xmlcalabash:xmlcalabash1-gradle:1.1.2"
+    classpath "com.xmlcalabash:xmlcalabash1-asciidoctor:1.1.1"
+  }
+}
+
+configurations {
+  asciidoctor
+}
+
+dependencies {
+  asciidoctor "com.xmlcalabash:xmlcalabash:1.1.9-96"
+  asciidoctor "com.xmlcalabash:xmlcalabash1-asciidoctor:1.1.1"
+  asciidoctor "org.asciidoctor:asciidoctorj:1.5.2"
+}
+
+repositories {
+  maven { url uri('/tmp/repo') }
+  mavenLocal()
+  mavenCentral()
+  maven { url "http://maven.restlet.org" }
+}
+
+apply plugin: 'org.docbook.task'
+apply plugin: 'com.xmlcalabash.task'
+
+import org.docbook.DocBookTask
+import com.xmlcalabash.XMLCalabashTask
+import com.xmlcalabash.XMLCalabashExec
+
+task adoc2xml(type: XMLCalabashExec) {
+  classpath configurations.asciidoctor
+
+  inputs.dir "src/asciidoc"
+  outputs.dir "build/xml"
+
+  dataInput("source", "src/asciidoc/slides.adoc")
+  output("result", "build/xml/slides.xml")
+  pipeline = "style/asciidoctor.xpl"
+
+  doFirst {
+    mkdir "build"
+    mkdir "build/xml"
+  }
+}
+
+task copyXmlImages(type: Copy) {
+  from "src/img"
+  into "build/xml/img"
+}
+
+task copyHtmlImages(type: Copy) {
+  from "src/img"
+  into "build/html/img"
+}
+
+task copyRevealJS(type: Copy) {
+  from "../../../reveal.js/"
+  into "build/html/"
+}
+
+task copyImages(dependsOn: ['copyXmlImages', 'copyHtmlImages',
+                            'copyRevealJS']) {
+  // nop
+}
+
+task html(dependsOn: ['adoc2xml', 'copyImages'], type: DocBookTask) {
+  inputs.dir "build/xml"
+  outputs.dir "build/html"
+
+  input "build/xml/slides.xml"
+  output "build/html/index.html"
+  style "style/reveal.xsl"
+  format "html5"
+  param("output.dir", System.getProperty('user.dir') + "/build/xml/")
+  param("base.dir", "build/html/")
+  //param("resource.root", "")
+
+  doFirst {
+    mkdir "build"
+    mkdir "build/html"
+  }
+}
+
+task clean
+task clean.doFirst {
+  delete "build"
+}

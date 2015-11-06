@@ -1,0 +1,14 @@
+<!DOCTYPE doc SYSTEM "json.dtd">
+<doc>
+{
+    "object": {
+        "key": "value",
+        "key2": "value2",
+        "array": [
+            "a",
+            "b",
+            "c"
+        ]
+    }
+}
+</doc>
