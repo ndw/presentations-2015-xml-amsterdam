@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><title>(Non)XML in a (Non)XML World</title><meta name="description" content="FIXME:"><meta name="author" content="FIXME:"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="viewport" content="width=device-width, initial-scale=1.0,                      maximum-scale=1.0, user-scalable=no, minimal-ui"><link rel="stylesheet" href="css/reveal.css"><link rel="stylesheet" href="css/theme/white.css" id="theme"><link rel="stylesheet" href="lib/css/zenburn.css"><style type="text/css">
+.reveal section img { padding: 0.5em; }
+.reveal .slides > section.stack { padding-top: 2em; }
+      </style><script>
+	var link = document.createElement( 'link' );
+	link.rel = 'stylesheet';
+	link.type = 'text/css';
+	link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+	document.getElementsByTagName( 'head' )[0].appendChild( link );
+      </script><!--[if lt IE 9]>
+      <script src="lib/js/html5shiv.js"></script>
+      <![endif]--></head><body><div class="reveal"><div class="slides"><section data-background="img/4x3/title-slide.png"><h2>(Non)XML in a (Non)XML World</h2><div class="author"><h3><span class="personname"><span class="firstname">Norman</span> <span class="surname">Walsh</span></span></h3></div></section><section data-background="img/4x3/normal-slide.png" class="section"><div class="section-titlepage"><h2>Welcome to XML Amsterdam</h2></div><section data-background="img/4x3/normal-slide.png" class="section"><div class="section-titlepage"><h3>Around the world in … ~22 hours</h3></div><figure id="_around_the_world_in_22_hours.2" class="informalfigure-wrapper"><div class="informalfigure"><div id="_around_the_world_in_22_hours.2.1" class="mediaobject"><img src="img/world.png" alt="World map"></div></div></figure><p>Because I’m crazy, that’s why.</p><p>▼</p></section><section data-background="img/4x3/normal-slide.png" class="section"><div class="section-titlepage"><h3>Keynote speaker?</h3></div><figure id="_keynote_speaker.2" class="informalfigure-wrapper"><div class="informalfigure"><div id="_keynote_speaker.2.1" class="mediaobject"><img src="img/keynote.png" alt="Keynote tweet"></div></div></figure><div class="itemizedlist"><ul><li><p>Say something <em>profound</em></p></li><li><p>Or say something <em>reflective</em></p></li></ul></div></section><section data-background="img/4x3/normal-slide.png" class="section"><div class="section-titlepage"><h3>What to say, what to say?</h3></div><div id="frag1" class="itemizedlist"><ul><li class="fragment"><p>XML in a non-XML world?</p></li><li class="fragment"><p>Non-XML in an XML world?</p></li><li class="fragment"><p>Hence the title</p></li></ul></div></section><section data-background="img/4x3/normal-slide.png" class="section"><div class="section-titlepage"><h3>Practical (Non)XML</h3></div><div id="frag2" class="itemizedlist"><ul><li class="fragment"><p>Why XML?</p></li><li class="fragment"><p>Why not XML?</p></li><li class="fragment"><p>It’s all XML, some of it is just weirdly serialized</p></li><li class="fragment"><p>And what if you could do more?</p></li><li class="fragment"><p>With fun demos!</p></li></ul></div></section></section><section data-background="img/4x3/normal-slide.png" class="section"><div class="section-titlepage"><h2>Why XML?</h2></div><section data-background="img/4x3/normal-slide.png" class="section"><div class="section-titlepage"><h3>It’s the structure, stupid</h3></div><div class="itemizedlist"><ul><li><p>I’ve trained myself to think in terms of structure</p></li><li><p>Structure is absolutely essential for reuse</p><div class="itemizedlist"><ul><li><p>Using the same content in different documents</p></li><li><p>Using the same content in different contexts</p></li></ul></div></li><li><p><em>Everyone</em> wants reuse</p></li></ul></div></section></section><section data-background="img/4x3/normal-slide.png" class="section"><div class="section-titlepage"><h2>Why Not XML?</h2></div><section data-background="img/4x3/normal-slide.png" class="section"><div class="section-titlepage"><h3>It’s the stupid structure</h3></div><div class="itemizedlist"><ul><li><p>It’s too complex</p></li><li><p>It’s too verbose</p></li><li><p>It’s too draconian</p></li><li><p>It’s hard to produce</p></li><li><p>It’s hard to consume</p><div class="itemizedlist"><ul><li><p>Doesn’t map nicely to programming language data structures</p></li></ul></div></li></ul></div></section></section><section data-background="img/4x3/normal-slide.png" class="section"><div class="section-titlepage"><h2>No, XML!</h2></div><div class="itemizedlist"><ul><li><p>It’s complex enough to capture rich document structures (mixed content)</p></li><li><p>It allows (requires) the author to speak with precision</p></li><li><p>It’s always better to be correct</p></li><li><p>It’s hard to produce/consume with non-XML tools</p><div class="itemizedlist"><ul><li><p>Patient: “Doctor, doctor, it hurts when I scratch my elbow.”</p></li><li><p>Doctor: “Then stop scratching your elbow.”</p></li></ul></div></li></ul></div></section><section data-background="img/4x3/normal-slide.png" class="section"><div class="section-titlepage"><h2>Hierarchy of projects</h2></div><div id="frag11" class="itemizedlist"><ul><li class="fragment"><p>Tens of very big projects. Very big budgets. Very sensitive to error.</p></li><li class="fragment"><p>Hundreds of big projects. Big budgets. Sensitive to error.</p></li><li class="fragment"><p>Thousands of smaller projects. Small budgets. Less sensitive to error.</p></li><li class="fragment"><p>Millions of small projects. No budgets. Mostly insensitive to error.</p></li><li class="fragment"><p>This is what winning looks like, by the way.</p></li></ul></div></section><section data-background="img/4x3/normal-slide.png" class="section"><div class="section-titlepage"><h2>The simplest thing</h2></div><section data-background="img/4x3/normal-slide.png" class="section"><div class="section-titlepage"><h3>The simplest thing that could possibly work</h3></div><div class="itemizedlist"><ul><li><p>If all you need are:</p><div class="itemizedlist"><ul><li><p>Atomic values</p></li><li><p>Lists of atomic values</p></li><li><p>Key/values pairs (associative arrays, hashes, “objects”)</p></li></ul></div></li></ul></div><p>▼</p></section><section data-background="img/4x3/normal-slide.png" class="section"><div class="section-titlepage"><h3>JSON is simple</h3></div><div class="itemizedlist"><ul><li><p>No elements</p></li><li><p>No attributes</p></li><li><p>No namespaces</p></li><li><p>No mixed content</p></li><li><p>A paucity of data types</p></li><li><p>“Just” objects, arrays, and scalar values</p></li></ul></div></section><section data-background="img/4x3/normal-slide.png" class="section"><div class="section-titlepage"><h3>JSON is “just data”</h3></div><p>It maps directly to programming language concepts that
+are provided “natively” by most programming languages
+and well understood by most programmers.</p></section><section data-background="img/4x3/normal-slide.png" class="section"><div class="section-titlepage"><h3>With schemas…</h3></div><pre>
+<code>{
+	"title": "Example Schema",
+	"type": "object",
+	"properties": {
+		"firstName": {
+			"type": "string"
+		},
+		"lastName": {
+			"type": "string"
+		},
+		"age": {
+			"description": "Age in years",
+			"type": "integer",
+			"minimum": 0
+		}
+	},
+	"required": ["firstName", "lastName"]
+}</code></pre></section><section data-background="img/4x3/normal-slide.png" class="section"><div class="section-titlepage"><h3>And namespaces (sortof)…</h3></div><pre>
+<code>{
+    "@id": "http://store.example.com/",
+    "@type": "Store",
+    "name": "Links Bike Shop",
+    "description": "The most \"linked\" bike store on earth!",
+    "product": [
+        {
+            "@id": "p:links-swift-chain",
+            "@type": "Product",
+            "name": "Links Swift Chain",
+            "description": "A fine chain with many links.",
+            "category": ["cat:parts", "cat:chains"],
+            "price": "10.00",
+            "stock": 10
+        }
+    ],
+    "@context": {
+        "Store": "http://ns.example.com/store#Store",
+        "Product": "http://ns.example.com/store#Product",
+        "product": "http://ns.example.com/store#product",
+        "category":
+        {
+          "@id": "http://ns.example.com/store#category",
+          "@type": "@id"
+        },
+        "price": "http://ns.example.com/store#price",
+        "stock": "http://ns.example.com/store#stock",
+        "name": "http://purl.org/dc/terms/title",
+        "description": "http://purl.org/dc/terms/description",
+        "p": "http://store.example.com/products/",
+        "cat": "http://store.example.com/category/"
+    }
+}</code></pre><p>But I digress.</p></section><section data-background="img/4x3/normal-slide.png" class="section"><div class="section-titlepage"><h3>Simple is better</h3></div><div id="frag3" class="itemizedlist"><ul><li class="fragment"><p>Simplicity is rarely an absolute</p></li><li class="fragment"><p>Making some things simpler almost <em>always</em> makes other things more complicated</p></li><li class="fragment"><p>Complexity creeps up on you</p></li></ul></div></section><section data-background="img/4x3/normal-slide.png" class="section"><div class="section-titlepage"><h3>Demo</h3></div><p>AWS CloudFormation templates</p></section><section data-background="img/4x3/normal-slide.png" class="section"><div class="section-titlepage"><h3>JSON template (1/2)</h3></div><pre>
+<code>{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "MarkLogic Sample  Template:: Build Date: NDW HVM 8.0.1",
+    "Parameters": {
+        "AdminUser": {
+            "Description": "The MarkLogic Administrator Username",
+            "Type": "String"
+        },</code></pre><p>It all looks fairly reasonable, until…</p></section><section data-background="img/4x3/normal-slide.png" class="section"><div class="section-titlepage"><h3>JSON template (2/2)</h3></div><pre>
+<code>            "UserData": {"Fn::Base64": {"Fn::Join": [
+                "",
+                [
+                    "#!/bin/bash\n",
+                    "function error_exit\n",
+                    "{\n",
+                    "     logger -t MarkLogic  \"$1\"",</code></pre><div class="itemizedlist"><ul><li><p>Funny key names with implied semantics</p></li><li><p>No multi-line strings</p></li></ul></div></section><section data-background="img/4x3/normal-slide.png" class="section"><div class="section-titlepage"><h3>XML template (1/2)</h3></div><pre>
+<code>&lt;object xmlns="http://marklogic.com/xdmp/json/basic"
+      xmlns:AWS="http://amazon.com/aws"
+      xmlns:MarkLogic="http://marklogic.com/ns"&gt;
+   &lt;AWSTemplateFormatVersion&gt;2010-09-09&lt;/AWSTemplateFormatVersion&gt;
+   &lt;Description&gt;MarkLogic Sample  Template:: Build Date: NDW HVM 8.0.1&lt;/Description&gt;
+   &lt;Parameters&gt;
+      &lt;AdminUser&gt;
+         &lt;Description&gt;The MarkLogic Administrator Username&lt;/Description&gt;
+         &lt;Type&gt;String&lt;/Type&gt;
+      &lt;/AdminUser&gt;</code></pre><p>I totally made up this XML vocabulary</p></section><section data-background="img/4x3/normal-slide.png" class="section"><div class="section-titlepage"><h3>XML template (2/2)</h3></div><pre>
+<code>            &lt;UserData encoding="base64"&gt;
+#!/bin/bash
+
+function error_exit
+{
+  logger -t MarkLogic  "$1"
+  exit 1
+}</code></pre></section><section data-background="img/4x3/normal-slide.png" class="section"><div class="section-titlepage"><h3>JSON error</h3></div><pre>
+<code>[Error: Parse error on line 342:
+...}        }    }}
+-------------------^
+Expecting '}', ',', got 'EOF']</code></pre><div class="itemizedlist"><ul><li><p>Very, uhm, “helpful”</p></li></ul></div></section><section data-background="img/4x3/normal-slide.png" class="section"><div class="section-titlepage"><h3>XML error</h3></div><pre>
+<code>cftemp.xml:203: parser error :
+   Opening and ending tag mismatch: UserData line 173 and Properties
+         &lt;/Properties&gt;</code></pre><div class="itemizedlist"><ul><li><p>Missing end tag precisely identified</p></li></ul></div></section></section><section data-background="img/4x3/normal-slide.png" class="section"><div class="section-titlepage"><h2>Verbosity</h2></div><section data-background="img/4x3/normal-slide.png" class="section"><div class="section-titlepage"><h3>XML inputs</h3></div><div class="itemizedlist"><ul><li><p>XML is too verbose</p></li><li><p>XML is too hard to type</p></li><li><p>Why do I have to quote attribute values?</p></li><li><p>Why do I have to have matching end tags?</p></li></ul></div><p>▼</p></section><section data-background="img/4x3/normal-slide.png" class="section"><div class="section-titlepage"><h3>Simpler inputs</h3></div><div class="itemizedlist"><ul><li><p>Simpler input formats are all the rage</p><div class="itemizedlist"><ul><li><p>What’s your favorite MarkDown flavor this week?</p></li></ul></div></li><li><p>This is not a new concept</p></li></ul></div></section><section data-background="img/4x3/normal-slide.png" class="section"><div class="section-titlepage"><h3>To prove this point</h3></div><p>I wrote a JSON parser…</p><p class="fragment" id="frag1b">in SGML</p></section><section data-background="img/4x3/normal-slide.png" class="section"><div class="section-titlepage"><h3>You did what now?</h3></div><blockquote><p>First of all: YOU ARE NUTS! Creative, ingenious, and NUTS!</p><div class="attribution"><span class="mdash">—</span>
+B. Tommie Usdin
+</div></blockquote><blockquote><p>By the by, did I bother to tell you that this is ingenious. And yes,
+you can do it. Aaaaaaqaaaaaaaaargh! You are one very sick puppy</p><div class="attribution"><span class="mdash">—</span>
+Debbie Lapeyre
+</div></blockquote></section><section data-background="img/4x3/normal-slide.png" class="section"><div class="section-titlepage"><h3>Remember: In SGML…</h3></div><div id="frag4" class="orderedlist"><ol style="list-style: decimal;"><li class="fragment"><p>You <em>must</em> have a schema (a DTD)</p></li><li class="fragment"><p>You are allowed to omit (some) start and end tags</p></li><li class="fragment"><p>Structures can span across entity boundaries</p></li><li class="fragment"><p>You can write a state machines with <code class="literal">SHORTREF</code></p></li></ol></div><aside class="notes"><div class="sidebar-content"><p>The HTML5 rules for head and tbody</p></div></aside></section><section data-background="img/4x3/normal-slide.png" class="section"><div class="section-titlepage"><h3>Demo</h3></div><p>Parsing JSON with SGML</p></section><section data-background="img/4x3/normal-slide.png" class="section"><div class="section-titlepage"><h3>An SGML document</h3></div><pre>
+<code>&lt;!DOCTYPE doc SYSTEM "json.dtd"&gt;
+&lt;doc&gt;
+{
+    "object": {
+        "key": "value",
+        "key2": "value2",
+        "array": [
+            "a",
+            "b",
+            "c"
+        ]
+    }
+}
+&lt;/doc&gt;</code></pre></section><section data-background="img/4x3/normal-slide.png" class="section"><div class="section-titlepage"><h3>An SGML DTD</h3></div><pre>
+<code>&lt;!ENTITY object-open     "&lt;object&gt;"&gt;
+&lt;!ENTITY object-close    "&lt;/object&gt;"&gt;
+&lt;!ENTITY key-open        "&lt;pair&gt;&lt;key&gt;"&gt;
+&lt;!ENTITY key-close       "&lt;/key&gt;"&gt;
+&lt;!ENTITY value-open      "&lt;value&gt;"&gt;
+&lt;!ENTITY value-close     "&lt;/value&gt;&lt;/pair&gt;"&gt;
+&lt;!ENTITY array-open      "&lt;array&gt;"&gt;
+&lt;!ENTITY array-close     "&lt;/array&gt;"&gt;
+&lt;!ENTITY entry-open      "&lt;entry&gt;"&gt;
+&lt;!ENTITY entry-close     "&lt;/entry&gt;"&gt;
+&lt;!ENTITY string-open     "&lt;string&gt;"&gt;
+&lt;!ENTITY string-close    "&lt;/string&gt;"&gt;
+
+&lt;!SHORTREF start-map  '{' object-open
+                      '[' array-open
+                      '"' string-open&gt;
+
+&lt;!SHORTREF object-map '"' key-open
+                      '}' object-close
+                      ':' value-open&gt;
+
+&lt;!SHORTREF value-map  '"' string-open
+                      ',' value-close
+                      '{' object-open
+                      '[' array-open
+                      ']' array-close
+                      '}' object-close&gt;
+
+&lt;!SHORTREF array-map  '"' string-open
+                      '{' object-open
+                      ',' entry-open
+                      '[' array-open
+                      ']' array-close
+                      '}' object-close&gt;
+
+&lt;!SHORTREF key-map    '"' key-close&gt;
+&lt;!SHORTREF string-map '"' string-close&gt;
+
+&lt;!USEMAP start-map    doc&gt;
+&lt;!USEMAP object-map   object&gt;
+&lt;!USEMAP key-map      key&gt;
+&lt;!USEMAP value-map    value&gt;
+&lt;!USEMAP string-map   string&gt;
+&lt;!USEMAP array-map    array&gt;
+
+&lt;!ELEMENT doc    - - (object|array)+&gt;
+&lt;!ELEMENT pair   O O (key,value)&gt;
+&lt;!ELEMENT object - - (pair)+&gt;
+&lt;!ELEMENT key    - - (#PCDATA)*&gt;
+&lt;!ELEMENT value  - O (object|array|string)*&gt;
+&lt;!ELEMENT string - - (#PCDATA)*&gt;
+&lt;!ELEMENT array  - - (entry)+&gt;
+&lt;!ELEMENT entry  O O (object|string)&gt;</code></pre></section><section data-background="img/4x3/normal-slide.png" class="section"><div class="section-titlepage"><h3>The same SGML document</h3></div><pre>
+<code>&lt;!DOCTYPE doc SYSTEM "json.dtd"&gt;
+&lt;doc&gt;
+   &lt;object&gt;
+      &lt;pair&gt;
+         &lt;key&gt;object&lt;/key&gt;
+         &lt;value&gt;
+            &lt;object&gt;
+               &lt;pair&gt;
+                  &lt;key&gt;key&lt;/key&gt;
+                  &lt;value&gt;
+                     &lt;string&gt;value&lt;/string&gt;
+                  &lt;/value&gt;
+               &lt;/pair&gt;
+               &lt;pair&gt;
+                  &lt;key&gt;key2&lt;/key&gt;
+                  &lt;value&gt;
+                     &lt;string&gt;value2&lt;/string&gt;
+                  &lt;/value&gt;
+               &lt;/pair&gt;
+               &lt;pair&gt;
+                  &lt;key&gt;array&lt;/key&gt;
+                  &lt;value&gt;
+                     &lt;array&gt;
+                        &lt;entry&gt;
+                           &lt;string&gt;a&lt;/string&gt;
+                        &lt;/entry&gt;
+                        &lt;entry&gt;
+                           &lt;string&gt;b&lt;/string&gt;
+                        &lt;/entry&gt;
+                        &lt;entry&gt;
+                           &lt;string&gt;c&lt;/string&gt;
+                        &lt;/entry&gt;
+                     &lt;/array&gt;
+                  &lt;/value&gt;
+               &lt;/pair&gt;
+            &lt;/object&gt;
+         &lt;/value&gt;
+      &lt;/pair&gt;
+   &lt;/object&gt;
+&lt;/doc&gt;</code></pre></section></section><section data-background="img/4x3/normal-slide.png" class="section"><div class="section-titlepage"><h2>It’s not simple enough</h2></div><figure id="_it_s_not_simple_enough.2" class="informalfigure-wrapper"><div class="informalfigure"><div id="_it_s_not_simple_enough.2.1" class="mediaobject"><img src="img/lessobsessive.png" alt="Less obsessive tweet"></div></div></figure></section><section data-background="img/4x3/normal-slide.png" class="section"><div class="section-titlepage"><h2>Thoughts on writing</h2></div><div class="itemizedlist"><ul><li><p>Some folks say you can’t write in XML:</p></li></ul></div><figure id="_thoughts_on_writing.3" class="informalfigure-wrapper"><div class="informalfigure"><div id="_thoughts_on_writing.3.1" class="mediaobject"><img src="img/despite-hl.png" alt="Despite the fact…"></div></div></figure><div class="itemizedlist"><ul><li><p>Generally speaking, [NSFW –ed]</p></li><li><p>I assert that structure aids my writing</p></li></ul></div></section><section data-background="img/4x3/normal-slide.png" class="section"><div class="section-titlepage"><h2>Non-XML XML Authoring</h2></div><div class="itemizedlist"><ul><li><p>MarkDown</p><div class="itemizedlist"><ul><li><p>CommonMark</p></li><li><p>GitHub</p></li><li><p>Flavor of the week</p></li></ul></div></li><li><p>AsciiDoc</p><div class="itemizedlist"><ul><li><p>AsciiDoctor</p></li></ul></div></li></ul></div></section><section data-background="img/4x3/normal-slide.png" class="section"><div class="section-titlepage"><h2>Why?</h2></div><div class="itemizedlist"><ul><li><p>Simpler is better</p></li><li><p>HTML5 isn’t helping authors</p></li></ul></div></section><section data-background="img/4x3/normal-slide.png" class="section"><div class="section-titlepage"><h2>It’s not markup</h2></div><figure id="_it_s_not_markup.2" class="informalfigure-wrapper"><div class="informalfigure"><div id="_it_s_not_markup.2.1" class="mediaobject"><img src="img/notmarkup.png" alt="Not markup tweet"></div></div></figure><figure id="_it_s_not_markup.3" class="informalfigure-wrapper"><div class="informalfigure"><div id="_it_s_not_markup.3.1" class="mediaobject"><img src="img/dislikehtml5.png" alt="Dislike HTML5 tweet"></div></div></figure></section><section data-background="img/4x3/normal-slide.png" class="section"><div class="section-titlepage"><h2>The modern web</h2></div><div class="itemizedlist"><ul><li><p>HTML5</p></li><li><p>JavaScript</p><div class="itemizedlist"><ul><li><p>JQuery</p></li><li><p>Angular</p></li></ul></div></li><li><p>CSS</p><div class="itemizedlist"><ul><li><p>Sass</p></li></ul></div></li><li><p>Analytics</p></li></ul></div><p>It’s frameworks all the way down</p></section><section data-background="img/4x3/normal-slide.png" class="section"><div class="section-titlepage"><h2>Authoring</h2></div><section data-background="img/4x3/normal-slide.png" class="section"><div class="section-titlepage"><h3>My typical methodology</h3></div><div class="itemizedlist"><ul><li><p>Write in DocBook, or some customization</p></li><li><p>Convert to HTML with CSS and JavaScript for presentation</p></li><li><p>Convert to PDF for print</p></li><li><p>Refactor, reuse, repurpose, restyle with ease</p></li></ul></div><p>▼</p></section><section data-background="img/4x3/normal-slide.png" class="section"><div class="section-titlepage"><h3>Methodology for this talk</h3></div><div class="itemizedlist"><ul><li><p>Was written entirely in AsciiDoc</p></li><li><p>Formatted by AsciiDoctor into DocBook 5</p></li><li><p>Transformed by XSLT into HTML5</p></li><li><p>Displayed with <a href="http://lab.hakim.se/reveal-js/#/">Reveal.JS</a></p></li></ul></div><aside class="notes"><div class="sidebar-content"><div class="itemizedlist"><ul><li><p>AsciiDoctor for something real</p></li><li><p>Still using DocBook because I have tooling</p></li><li><p>Reveal.JS is modern and useful and I don’t have to maintain it!</p></li></ul></div></div></aside></section><section data-background="img/4x3/normal-slide.png" class="section"><div class="section-titlepage"><h3>I have concerns</h3></div><div class="itemizedlist"><ul><li><p>For simple content, “markdown” is easier</p></li><li><p>But for complex content…</p></li></ul></div></section><section data-background="img/4x3/normal-slide.png" class="section"><div class="section-titlepage"><h3>It’s all a bit ad hoc</h3></div><pre>
+<code>= Main Title
+Norman Walsh &lt;ndw@nwalsh.com&gt;
+:docinfo:
+:imagesdir: img
+
+== Section Title
+image::world.png[World map,link=http://example.com/]
+[#frag5]
+* Simplicity is rarely an absolute
+****
+Speaker notes
+****
+
+[quote, B. Tommie Usdin]
+First of all: YOU ARE NUTS! Creative, ingenious, and NUTS!</code></pre><div id="frag6" class="itemizedlist"><ul><li class="fragment"><p>It’s really a step back to the pre-markup days</p></li><li class="fragment"><p>Is it easier to let a thousand flowers bloom these days?</p></li></ul></div><aside class="notes"><div class="sidebar-content"><div class="itemizedlist"><ul><li><p>Everything is much more connected, less need for docs? interchange?</p></li><li><p>Weird procedural errors</p></li><li><p>Swing, pendulum, swing!</p></li></ul></div></div></aside></section><section data-background="img/4x3/normal-slide.png" class="section"><div class="section-titlepage"><h3>Quiz (1/2)</h3></div><p>Who recognizes these dot commands?</p><figure id="_quiz_1_2.3" class="informaltable-wrapper"><div class="informaltable"><table border="0" style="border-collapse: collapse;border-top: 1px solid ; border-bottom: 1px solid ; border-left: 1px solid ; border-right: 1px solid ; "><colgroup><col class="tcol1" width="50%"><col class="tcol2" width="50%"></colgroup><tbody><tr><td style="border-right: 1px solid ; border-bottom: 1px solid ; " align="left" valign="top"><p>Description</p></td><td style="border-bottom: 1px solid ; " align="left" valign="top"><p>Command</p></td></tr><tr><td style="border-right: 1px solid ; border-bottom: 1px solid ; " align="left" valign="top"><p>Bidirectional print on/off</p></td><td style="border-bottom: 1px solid ; " align="left" valign="top"><p><code class="literal">.BP</code></p></td></tr><tr><td style="border-right: 1px solid ; border-bottom: 1px solid ; " align="left" valign="top"><p>Microjustify on/off</p></td><td style="border-bottom: 1px solid ; " align="left" valign="top"><p><code class="literal">.UJ</code></p></td></tr><tr><td style="border-right: 1px solid ; border-bottom: 1px solid ; " align="left" valign="top"><p>Page offset</p></td><td style="border-bottom: 1px solid ; " align="left" valign="top"><p><code class="literal">.PO</code></p></td></tr><tr><td style="border-right: 1px solid ; " align="left" valign="top"><p>Comment (not printed)</p></td><td align="left" valign="top"><p><code class="literal">.IG</code> <em>or</em> <code class="literal">..</code></p></td></tr></tbody></table></div></figure><aside class="notes"><div class="sidebar-content"><p>WordStar</p><p>Possibly US centric?</p><p>I’m not going to bother with TeX and troff</p></div></aside></section><section data-background="img/4x3/normal-slide.png" class="section"><div class="section-titlepage"><h3>Quiz (2/2)</h3></div><p>And this markup?</p><pre>
+<code>@Heading(The Beginning)
+@Begin(Quotation)
+      Let's start at the very beginning, a very good place to start
+@End(Quotation)</code></pre><aside class="notes"><div class="sidebar-content"><p>Scribe</p></div></aside></section></section><section data-background="img/4x3/normal-slide.png" class="section"><div class="section-titlepage"><h2>JSON revisited</h2></div><section data-background="img/4x3/normal-slide.png" class="section"><div class="section-titlepage"><h3>What is JSON?</h3></div><div id="frag7" class="itemizedlist"><ul><li class="fragment"><p>JSON is structured markup</p></li><li class="fragment"><p>We have good tools for leveraging document structure</p></li><li class="fragment"><p>What if we could use them on JSON?</p></li></ul></div><p class="fragment" id="frag9">▼</p></section><section data-background="img/4x3/normal-slide.png" class="section"><div class="section-titlepage"><h3>XPath over JSON</h3></div><pre>
+<code>{
+  "a": {
+    "b" : "v1",
+    "c1" : 1,
+    "d" : null,
+    "g" : ["s1", "s2", "s3"]
+  }
+}</code></pre><div class="itemizedlist"><ul><li><p><code class="literal">/a/b</code> = <code class="literal">"v1"</code></p></li><li><p><code class="literal">/a/g</code> = <code class="literal">("s1", "s2", "s3")</code></p></li><li><p><code class="literal">/a/g[2]</code> = <code class="literal">"s2"</code> <em>❔</em></p></li></ul></div><aside class="notes"><div class="sidebar-content"><p>Remember that /a/b always returns a sequence
+sorted in document order</p></div></aside></section><section data-background="img/4x3/normal-slide.png" class="section"><div class="section-titlepage"><h3>XPath over JSON (continued)</h3></div><pre>
+<code>{
+  "a": {
+    "b" : "v1",
+    "c1" : 1,
+    "d" : null,
+    "g" : ["s1", "s2", "s3"]
+  }
+}</code></pre><div class="itemizedlist"><ul><li><p><code class="literal">/a/d</code> = <code class="literal">null</code> <em>❔</em></p></li><li><p><code class="literal">/a/g[1]/node-name()</code> = <code class="literal">g</code> <em>❔</em></p></li><li><p><code class="literal">/a/g[2]/node-name()</code> = <code class="literal">g</code> <em>❔</em></p></li></ul></div></section><section data-background="img/4x3/normal-slide.png" class="section"><div class="section-titlepage"><h3>Demo</h3></div><p>JSON in MarkLogic Server</p></section><section data-background="img/4x3/normal-slide.png" class="section"><div class="section-titlepage"><h3>JavaScript+JSON in MarkLogic Server</h3></div><pre>
+<code>var json = xdmp.documentGet("/projects/presentations/2015/11-xmlams/cf/cftemp.json").next().value.toObject()
+
+json["Resources"]["InstanceSecurityGroup"]["Type"]</code></pre><div class="itemizedlist"><ul><li><p>Returns “<code class="literal">AWS::EC2::SecurityGroup</code>”</p></li></ul></div></section><section data-background="img/4x3/normal-slide.png" class="section"><div class="section-titlepage"><h3>XPath over JSON in MarkLogic Server</h3></div><pre>
+<code>xquery version "1.0-ml";
+
+let $json := xdmp:document-get("/projects/presentations/2015/11-xmlams/cf/cftemp.json")
+return
+  $json//InstanceSecurityGroup/Type</code></pre><div class="itemizedlist"><ul><li><p>Returns “<code class="literal">AWS::EC2::SecurityGroup</code>”</p></li></ul></div></section></section><section data-background="img/4x3/normal-slide.png" class="section"><div class="section-titlepage"><h2>Did XML lose?</h2></div><figure id="_did_xml_lose.2" class="informalfigure-wrapper"><div class="informalfigure"><div id="_did_xml_lose.2.1" class="mediaobject"><img src="img/wishxmlhadwon.png" alt="XML Tweet"></div></div></figure></section><section data-background="img/4x3/normal-slide.png" class="section"><div class="section-titlepage"><h2>In conclusion</h2></div><p class="fragment" id="frag9">With apologies to Taylor Swift</p><blockquote class="fragment"><p>'Cause the parsers gonna parse, parse, parse,<br>
+And the haters gonna hate, hate, hate,<br>
+Baby, I’m just gonna shake, shake, shake, shake, shake<br>
+I shake it off, I shake it off</p></blockquote></section></div></div><script src="lib/js/head.min.js"></script><script src="js/reveal.js"></script><script>
+        // Full list of configuration options available at:
+        // https://github.com/hakimel/reveal.js#configuration
+        Reveal.initialize({
+                           controls: false,
+                           progress: false,
+                           history: true,
+                           center: true,
+                           width: 1280,
+                           height: 960,
+                           transition: 'convex', // none/fade/slide/convex/concave/zoom
+                           // Optional reveal.js plugins
+                           dependencies: [
+                                        { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+                                        { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+                                        { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+                                        { src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+                                        { src: 'plugin/zoom-js/zoom.js', async: true },
+                                        { src: 'plugin/notes/notes.js', async: true }
+                                ]
+                        });
+		</script></body></html>
