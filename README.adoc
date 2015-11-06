@@ -4,5 +4,7 @@ Norman Walsh <ndw@nwalsh.com>
 == XML Amsterdam
 === 6 November 2015
 
-This repository contains the sources for my presentation at
+This repository contains the sources for
+http://ndw.github.io/presentations-2015-xml-amsterdam/[my presentation] at
 XML Amsterdam 2015.
+
